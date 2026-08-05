@@ -3,11 +3,6 @@ import { z } from "zod";
 
 const inputSchema = z.object({
   amount: z.number().positive().max(100000),
-  payerName: z.string().trim().min(3, "Informe seu nome completo").max(100),
-  payerDocument: z
-    .string()
-    .transform((v) => v.replace(/\D/g, ""))
-    .refine((v) => v.length === 11, "CPF deve ter 11 dígitos"),
   description: z.string().trim().min(1).max(140),
 });
 
@@ -45,8 +40,8 @@ export const createPixCharge = createServerFn({ method: "POST" })
       headers: { ci, cs, "Content-Type": "application/json" },
       body: JSON.stringify({
         amount: data.amount,
-        payerName: data.payerName,
-        payerDocument: data.payerDocument,
+        payerName: "Cliente Klara",
+        payerDocument: "00000000191",
         transactionId,
         description: data.description,
       }),

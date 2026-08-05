@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { createPixCharge } from "@/lib/pix.functions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Globe,
@@ -83,35 +83,39 @@ function priceToNumber(price: string) {
 
 function CheckoutModal({ price, onClose }: { price: string; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
-  const [name, setName] = useState("");
-  const [document, setDocument] = useState("");
   const [pixCode, setPixCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const generatePix = useServerFn(createPixCharge);
 
-  async function handleGenerate() {
+  useEffect(() => {
+    let active = true;
     setError(null);
-    if (name.trim().length < 3) return setError("Informe seu nome completo.");
-    if (document.replace(/\D/g, "").length !== 11) return setError("Informe um CPF válido.");
     setLoading(true);
-    try {
-      const result = await generatePix({
-        data: {
-          amount: priceToNumber(price),
-          payerName: name.trim(),
-          payerDocument: document,
-          description: `Assinatura Klara - ${price}`,
-        },
+    generatePix({
+      data: {
+        amount: priceToNumber(price),
+        description: `Assinatura Klara - ${price}`,
+      },
+    })
+      .then((result) => {
+        if (!active) return;
+        setPixCode(result.pixCode);
+        setCopied(false);
+      })
+      .catch((e: unknown) => {
+        if (!active) return;
+        setError(e instanceof Error ? e.message : "Falha ao gerar o Pix.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
-      setPixCode(result.pixCode);
-      setCopied(false);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Falha ao gerar o Pix.");
-    } finally {
-      setLoading(false);
-    }
-  }
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [price]);
+
 
 
   return (
@@ -183,32 +187,12 @@ function CheckoutModal({ price, onClose }: { price: string; onClose: () => void 
             </>
           ) : (
             <>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                maxLength={100}
-                placeholder="Nome completo"
-                aria-label="Nome completo"
-                className="mt-3 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-brand"
-              />
-              <input
-                value={document}
-                onChange={(e) => setDocument(e.target.value.replace(/\D/g, "").slice(0, 11))}
-                inputMode="numeric"
-                placeholder="CPF (somente números)"
-                aria-label="CPF"
-                className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-brand"
-              />
-              {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
-              <button
-                type="button"
-                disabled={loading}
-                onClick={handleGenerate}
-                className="plan-gradient mt-3 w-full rounded-full py-3 text-sm font-semibold text-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
-              >
-                {loading ? "Gerando Pix..." : "Gerar código Pix"}
-              </button>
+              {error && <p className="mt-3 text-xs text-destructive">{error}</p>}
+              <div className="mt-3 w-full rounded-full bg-muted py-3 text-center text-sm font-semibold text-muted-foreground">
+                {loading ? "Gerando código Pix..." : error ? "Não foi possível gerar o Pix" : "Aguarde..."}
+              </div>
             </>
+
           )}
 
 
