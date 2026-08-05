@@ -23,7 +23,7 @@ import {
   Check,
 } from "lucide-react";
 import coverImg from "@/assets/cover.jpg";
-import avatarImg from "@/assets/avatar.jpg";
+import avatarAsset from "@/assets/avatar.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -141,7 +141,7 @@ function CheckoutModal({ price, onClose }: { price: string; onClose: () => void 
 
         <div className="relative px-4 pb-4">
           <img
-            src={avatarImg}
+            src={avatarAsset.url}
             alt="Klara"
             width={512}
             height={512}
@@ -269,7 +269,7 @@ function Profile() {
 
           <div className="relative px-4 pb-4">
             <img
-              src={avatarImg}
+              src={avatarAsset.url}
               alt="Foto de perfil de Klara"
               width={512}
               height={512}
@@ -321,7 +321,7 @@ function Profile() {
 
             <div className="mt-3 flex items-center gap-2">
               <img
-                src={avatarImg}
+                src={avatarAsset.url}
                 alt="Klara"
                 width={512}
                 height={512}
@@ -421,7 +421,7 @@ function Profile() {
           <article className="mt-3 overflow-hidden rounded-2xl bg-card shadow-card">
             <div className="flex items-center gap-2 p-3">
               <img
-                src={avatarImg}
+                src={avatarAsset.url}
                 alt="Klara"
                 width={512}
                 height={512}
