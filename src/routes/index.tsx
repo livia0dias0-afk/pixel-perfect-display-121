@@ -340,11 +340,18 @@ function Profile() {
               <button
                 type="button"
                 onClick={() => setCheckoutPrice("R$ 20,00")}
-                className="plan-gradient w-full rounded-full py-3 text-base font-semibold text-foreground transition-opacity hover:opacity-90"
+                className="plan-gradient animate-cta-pulse w-full rounded-full py-3 text-base font-semibold text-foreground transition-opacity hover:opacity-90"
               >
                 Assinar agora R$ 20,00
               </button>
+              <span
+                aria-hidden="true"
+                className="animate-tap-hint pointer-events-none absolute -bottom-4 right-8 z-10 select-none text-3xl drop-shadow-lg"
+              >
+                👆
+              </span>
             </div>
+
 
             <p className="mt-2 text-right text-xs text-muted-foreground">
               Preço original <span className="line-through">R$ 25,00</span>
