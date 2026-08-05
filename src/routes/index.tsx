@@ -293,8 +293,9 @@ function Profile() {
             <p className="text-sm text-muted-foreground">@klarinha</p>
 
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Talvez você já me conheça de algum lugar… 23 anos, gaúcha, DJ nas horas vagas e
-              recém…
+              Tenho 19 anos, sou brasileira e adoro explorar minha sensualidade na
+              web. Aqui você encontra conteúdo exclusivo, ousado e sem frescura, com
+              vídeos, fotos e acesso direto ao meu chat privado. 🔞😈
             </p>
 
             <div className="mt-3 flex items-center gap-2">
