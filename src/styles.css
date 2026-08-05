@@ -170,3 +170,36 @@
 @utility shadow-card {
   box-shadow: var(--shadow-card);
 }
+
+@keyframes tap-hint {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-8deg) scale(1);
+  }
+  40% {
+    transform: translateY(-14px) rotate(-8deg) scale(1.12);
+  }
+  60% {
+    transform: translateY(-4px) rotate(-8deg) scale(1.04);
+  }
+}
+
+@keyframes cta-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-brand) 45%, transparent);
+  }
+  50% {
+    transform: scale(1.025);
+    box-shadow: 0 0 0 12px color-mix(in oklab, var(--color-brand) 0%, transparent);
+  }
+}
+
+@utility animate-tap-hint {
+  animation: tap-hint 1.4s ease-in-out infinite;
+}
+
+@utility animate-cta-pulse {
+  animation: cta-pulse 1.8s ease-in-out infinite;
+}
