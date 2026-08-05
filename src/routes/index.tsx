@@ -293,9 +293,9 @@ function Profile() {
             <p className="text-sm text-muted-foreground">@klarinha</p>
 
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Tenho 19 anos, sou brasileira e adoro explorar minha sensualidade na
-              web. Aqui você encontra conteúdo exclusivo, ousado e sem frescura, com
-              vídeos, fotos e acesso direto ao meu chat privado. 🔞😈
+              Tenho 19 anos, e adoro me exibir e explorar minha sensualidade. Aqui você encontra
+              conteúdo exclusivo, ousado e sem frescura, com vídeos, fotos e acesso direto ao meu
+              chat privado. 🔞😈
             </p>
 
             <div className="mt-3 flex items-center gap-2">
