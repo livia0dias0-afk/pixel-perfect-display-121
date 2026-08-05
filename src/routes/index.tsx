@@ -74,10 +74,42 @@ const plans = [
 
 const benefits = ["Acesso ao conteúdo", "Chat exclusivo com o criador", "Cancele a qualquer hora"];
 
-const PIX_KEY = "00020101021226810014br.gov.bcb.pix2559qr-c";
+function priceToNumber(price: string) {
+  return Number(price.replace(/[^\d,]/g, "").replace(",", ".")) || 0;
+}
 
 function CheckoutModal({ price, onClose }: { price: string; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
+  const [name, setName] = useState("");
+  const [document, setDocument] = useState("");
+  const [pixCode, setPixCode] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const generatePix = useServerFn(createPixCharge);
+
+  async function handleGenerate() {
+    setError(null);
+    if (name.trim().length < 3) return setError("Informe seu nome completo.");
+    if (document.replace(/\D/g, "").length !== 11) return setError("Informe um CPF válido.");
+    setLoading(true);
+    try {
+      const result = await generatePix({
+        data: {
+          amount: priceToNumber(price),
+          payerName: name.trim(),
+          payerDocument: document,
+          description: `Assinatura Klara - ${price}`,
+        },
+      });
+      setPixCode(result.pixCode);
+      setCopied(false);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Falha ao gerar o Pix.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 p-3">
