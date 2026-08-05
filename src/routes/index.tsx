@@ -162,20 +162,52 @@ function CheckoutModal({ price, onClose }: { price: string; onClose: () => void 
           <p className="mt-2 text-xs text-muted-foreground">Valor</p>
           <p className="text-lg font-bold text-foreground">{price}</p>
 
-          <div className="mt-3 truncate rounded-lg border border-border px-3 py-2.5 text-sm text-muted-foreground">
-            {PIX_KEY}
-          </div>
+          {pixCode ? (
+            <>
+              <div className="mt-3 max-h-24 overflow-y-auto break-all rounded-lg border border-border px-3 py-2.5 text-xs text-muted-foreground">
+                {pixCode}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard?.writeText(pixCode);
+                  setCopied(true);
+                }}
+                className="plan-gradient mt-3 w-full rounded-full py-3 text-sm font-semibold text-foreground transition-opacity hover:opacity-90"
+              >
+                {copied ? "Código Pix copiado" : "Copiar código Pix"}
+              </button>
+            </>
+          ) : (
+            <>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                maxLength={100}
+                placeholder="Nome completo"
+                aria-label="Nome completo"
+                className="mt-3 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-brand"
+              />
+              <input
+                value={document}
+                onChange={(e) => setDocument(e.target.value.replace(/\D/g, "").slice(0, 11))}
+                inputMode="numeric"
+                placeholder="CPF (somente números)"
+                aria-label="CPF"
+                className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-brand"
+              />
+              {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
+              <button
+                type="button"
+                disabled={loading}
+                onClick={handleGenerate}
+                className="plan-gradient mt-3 w-full rounded-full py-3 text-sm font-semibold text-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+              >
+                {loading ? "Gerando Pix..." : "Gerar código Pix"}
+              </button>
+            </>
+          )}
 
-          <button
-            type="button"
-            onClick={() => {
-              navigator.clipboard?.writeText(PIX_KEY);
-              setCopied(true);
-            }}
-            className="plan-gradient mt-3 w-full rounded-full py-3 text-sm font-semibold text-foreground transition-opacity hover:opacity-90"
-          >
-            {copied ? "Chave Pix copiada" : "Copiar chave Pix"}
-          </button>
 
           <div className="my-4 h-px bg-border" />
 
