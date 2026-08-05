@@ -83,35 +83,39 @@ function priceToNumber(price: string) {
 
 function CheckoutModal({ price, onClose }: { price: string; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
-  const [name, setName] = useState("");
-  const [document, setDocument] = useState("");
   const [pixCode, setPixCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const generatePix = useServerFn(createPixCharge);
 
-  async function handleGenerate() {
+  useEffect(() => {
+    let active = true;
     setError(null);
-    if (name.trim().length < 3) return setError("Informe seu nome completo.");
-    if (document.replace(/\D/g, "").length !== 11) return setError("Informe um CPF válido.");
     setLoading(true);
-    try {
-      const result = await generatePix({
-        data: {
-          amount: priceToNumber(price),
-          payerName: name.trim(),
-          payerDocument: document,
-          description: `Assinatura Klara - ${price}`,
-        },
+    generatePix({
+      data: {
+        amount: priceToNumber(price),
+        description: `Assinatura Klara - ${price}`,
+      },
+    })
+      .then((result) => {
+        if (!active) return;
+        setPixCode(result.pixCode);
+        setCopied(false);
+      })
+      .catch((e: unknown) => {
+        if (!active) return;
+        setError(e instanceof Error ? e.message : "Falha ao gerar o Pix.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
-      setPixCode(result.pixCode);
-      setCopied(false);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Falha ao gerar o Pix.");
-    } finally {
-      setLoading(false);
-    }
-  }
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [price]);
+
 
 
   return (
