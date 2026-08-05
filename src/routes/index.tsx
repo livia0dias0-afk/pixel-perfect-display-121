@@ -187,32 +187,12 @@ function CheckoutModal({ price, onClose }: { price: string; onClose: () => void 
             </>
           ) : (
             <>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                maxLength={100}
-                placeholder="Nome completo"
-                aria-label="Nome completo"
-                className="mt-3 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-brand"
-              />
-              <input
-                value={document}
-                onChange={(e) => setDocument(e.target.value.replace(/\D/g, "").slice(0, 11))}
-                inputMode="numeric"
-                placeholder="CPF (somente números)"
-                aria-label="CPF"
-                className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-brand"
-              />
-              {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
-              <button
-                type="button"
-                disabled={loading}
-                onClick={handleGenerate}
-                className="plan-gradient mt-3 w-full rounded-full py-3 text-sm font-semibold text-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
-              >
-                {loading ? "Gerando Pix..." : "Gerar código Pix"}
-              </button>
+              {error && <p className="mt-3 text-xs text-destructive">{error}</p>}
+              <div className="mt-3 w-full rounded-full bg-muted py-3 text-center text-sm font-semibold text-muted-foreground">
+                {loading ? "Gerando código Pix..." : error ? "Não foi possível gerar o Pix" : "Aguarde..."}
+              </div>
             </>
+
           )}
 
 
