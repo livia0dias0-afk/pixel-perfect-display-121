@@ -23,7 +23,7 @@ import {
   Check,
 } from "lucide-react";
 import coverImg from "@/assets/cover.jpg";
-import avatarImg from "@/assets/avatar.jpg";
+import avatarAsset from "@/assets/avatar.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
