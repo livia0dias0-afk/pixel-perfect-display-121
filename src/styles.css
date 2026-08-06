@@ -257,3 +257,27 @@
   animation: gift-open 0.7s ease-in forwards;
 }
 
+.gift-opened-icon {
+  filter: drop-shadow(0 0 30px oklch(0.72 0.28 0 / 0.75));
+}
+
+.gift-access-button {
+  background-image: linear-gradient(90deg, oklch(0.66 0.25 355), oklch(0.62 0.24 25));
+  box-shadow: 0 12px 34px oklch(0.62 0.24 10 / 0.35);
+}
+
+@keyframes gift-reveal {
+  from {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@utility animate-gift-reveal {
+  animation: gift-reveal 0.45s ease-out both;
+}
+
