@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import coverAsset from "@/assets/cover.jpg.asset.json";
 import avatarAsset from "@/assets/avatar.jpg.asset.json";
+import { GiftIntro } from "@/components/GiftIntro";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
