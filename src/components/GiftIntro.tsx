@@ -14,21 +14,21 @@ export function GiftIntro({ onOpen }: { onOpen: () => void }) {
     return (
       <div className="gift-intro fixed inset-0 z-50 flex flex-col items-center justify-center px-6 text-center">
         <div className="animate-gift-reveal flex w-full max-w-sm flex-col items-center">
-          <div className="gift-opened-icon select-none text-[6rem] leading-none" aria-hidden="true">
-            🎁
+          <div className="gift-opened-icon select-none text-[5rem] leading-none" aria-hidden="true">
+            🎉
           </div>
-          <h1 className="mt-7 text-3xl font-bold text-white sm:text-4xl">Seu presente está pronto!</h1>
-          <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/70">
-            Toque no botão abaixo para acessar o perfil exclusivo da Klara.
-          </p>
+          <h1 className="mt-8 text-2xl font-bold text-white sm:text-3xl">
+            Parabéns, seu acesso foi desbloqueado!
+          </h1>
           <button
             type="button"
             onClick={onOpen}
-            className="gift-access-button mt-8 w-full rounded-full px-6 py-4 text-base font-bold text-white transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            className="gift-access-button mt-8 rounded-full px-10 py-4 text-base font-bold text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
           >
-            Acessar
+            Acessar ✅
           </button>
         </div>
+
       </div>
     );
   }
