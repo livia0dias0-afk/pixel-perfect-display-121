@@ -281,38 +281,5 @@
   animation: gift-reveal 0.45s ease-out both;
 }
 
-.captcha-card {
-  background: oklch(1 0 0 / 0.07);
-  border: 1px solid oklch(1 0 0 / 0.14);
-  backdrop-filter: blur(6px);
-}
-
-.captcha-tile {
-  background: oklch(1 0 0 / 0.1);
-  border: 1px solid oklch(1 0 0 / 0.16);
-}
-
-.captcha-tile-ok {
-  background: oklch(0.6 0.15 150 / 0.35);
-  border-color: oklch(0.7 0.16 150);
-}
-
-.captcha-tile-wrong {
-  border-color: oklch(0.65 0.22 25);
-  animation: captcha-shake 0.35s ease-in-out;
-}
-
-@keyframes captcha-shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-5px);
-  }
-  75% {
-    transform: translateX(5px);
-  }
-}
 
 
