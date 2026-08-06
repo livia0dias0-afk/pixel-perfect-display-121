@@ -57,8 +57,17 @@ export const createPixCharge = createServerFn({ method: "POST" })
 
     if (!res.ok) {
       console.error("MisticPay error", res.status, raw.slice(0, 500));
-      throw new Error("Não foi possível gerar o Pix agora. Tente novamente.");
+      const providerMessage =
+        parsed && typeof parsed === "object" && typeof (parsed as { message?: unknown }).message === "string"
+          ? (parsed as { message: string }).message
+          : null;
+      throw new Error(
+        providerMessage
+          ? `Não foi possível gerar o Pix: ${providerMessage}`
+          : "Não foi possível gerar o Pix agora. Tente novamente.",
+      );
     }
+
 
     const pixCode = pickPixCode(parsed);
     if (!pixCode) {
