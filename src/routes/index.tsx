@@ -192,11 +192,12 @@ function Profile() {
               </span>
               <button
                 type="button"
-                onClick={() => setCheckoutPrice("R$ 20,00")}
+                onClick={() => setCheckoutPrice("R$ 9,90")}
                 className="plan-gradient animate-cta-pulse w-full rounded-full py-3 text-base font-semibold text-foreground transition-opacity hover:opacity-90"
               >
-                Assinar agora R$ 20,00
+                Assinar agora R$ 9,90
               </button>
+
               <span
                 aria-hidden="true"
                 className="animate-tap-hint pointer-events-none absolute -bottom-4 right-8 z-10 select-none text-3xl drop-shadow-lg"
