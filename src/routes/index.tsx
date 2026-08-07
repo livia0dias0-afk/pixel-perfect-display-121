@@ -32,14 +32,15 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Assine o perfil de Klara e tenha acesso a 655 postagens e 1.146 mídias exclusivas. Planos a partir de R$ 20,00.",
+          "Assine o perfil de Klara e tenha acesso a 655 postagens e 1.146 mídias exclusivas. Planos a partir de R$ 9,90.",
       },
       { property: "og:title", content: "Klara (@klarinha)" },
       {
         property: "og:description",
         content:
-          "Conteúdo exclusivo: 655 postagens e 1.146 mídias. Assine agora a partir de R$ 20,00.",
+          "Conteúdo exclusivo: 655 postagens e 1.146 mídias. Assine agora a partir de R$ 9,90.",
       },
+
       { property: "og:type", content: "profile" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -188,8 +189,9 @@ function Profile() {
 
             <div className="relative mt-5">
               <span className="absolute -top-3 left-3 z-10 rounded-md bg-card px-2.5 py-1 text-xs font-bold text-brand-green shadow-card">
-                Economize 20%
+                Economize 60%
               </span>
+
               <button
                 type="button"
                 onClick={() => setCheckoutPrice("R$ 9,90")}
