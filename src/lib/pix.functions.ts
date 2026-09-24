@@ -15,25 +15,31 @@ export const createPixCharge = createServerFn({ method: "POST" })
       throw new Error("Pagamento indisponível: credenciais da OmegaPay não configuradas.");
     }
 
-    const identifier = `sub_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-
-    const res = await fetch("https://app.omegapayments.com.br/api/v1/gateway/pix/receive", {
-      method: "POST",
-      headers: { "x-public-key": pk, "x-secret-key": sk, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        identifier,
-        amount: data.amount,
-        client: {
-          name: "Cliente Carmen",
-          email: "cliente@carmenlucia.com",
-          phone: "(11) 99999-9999",
-          document: "00000000191",
-        },
-        products: [{ id: "assinatura", name: data.description, quantity: 1, price: data.amount }],
-      }),
-    });
-
-    const raw = await res.text();
+    let identifier = "";
+    let res!: Response;
+    let raw = "";
+    for (let attempt = 0; attempt < 3; attempt++) {
+      identifier = `sub_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      res = await fetch("https://app.omegapayments.com.br/api/v1/gateway/pix/receive", {
+        method: "POST",
+        headers: { "x-public-key": pk, "x-secret-key": sk, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          identifier,
+          amount: data.amount,
+          client: {
+            name: "Cliente Carmen",
+            email: "cliente@carmenlucia.com",
+            phone: "(11) 99999-9999",
+            document: "00000000191",
+          },
+          products: [{ id: "assinatura", name: data.description, quantity: 1, price: data.amount }],
+        }),
+      });
+      raw = await res.text();
+      if (res.status < 500) break;
+      console.error("OmegaPay 5xx, tentando de novo", res.status, raw.slice(0, 300));
+      await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
+    }
     let parsed: any = null;
     try {
       parsed = JSON.parse(raw);
