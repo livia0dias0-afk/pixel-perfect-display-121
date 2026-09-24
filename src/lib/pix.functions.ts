@@ -40,6 +40,7 @@ export const createPixCharge = createServerFn({ method: "POST" })
       throw new Error("Pagamento indisponível: credenciais da OmegaPay não configuradas.");
     }
 
+    const client = randomClient();
     let identifier = "";
     let res!: Response;
     let raw = "";
