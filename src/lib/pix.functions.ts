@@ -52,12 +52,7 @@ export const createPixCharge = createServerFn({ method: "POST" })
         body: JSON.stringify({
           identifier,
           amount: data.amount,
-          client: {
-            name: "Cliente Carmen",
-            email: "cliente@carmenlucia.com",
-            phone: "(11) 99999-9999",
-            document: "00000000191",
-          },
+          client,
           products: [{ id: "assinatura", name: data.description, quantity: 1, price: data.amount }],
         }),
       });
