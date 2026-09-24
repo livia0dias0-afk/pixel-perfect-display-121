@@ -28,13 +28,13 @@ const CheckoutModal = lazy(() => import("@/components/CheckoutModal"));
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Klara (@klarinha) | Assinatura exclusiva" },
+      { title: "Carmen (@carmenlucia) | Assinatura exclusiva" },
       {
         name: "description",
         content:
-          "Assine o perfil de Klara e tenha acesso a 655 postagens e 1.146 mídias exclusivas. Planos a partir de R$ 9,90.",
+          "Assine o perfil de Carmen e tenha acesso a 655 postagens e 1.146 mídias exclusivas. Planos a partir de R$ 9,90.",
       },
-      { property: "og:title", content: "Klara (@klarinha)" },
+      { property: "og:title", content: "Carmen (@carmenlucia)" },
       {
         property: "og:description",
         content:
@@ -110,7 +110,7 @@ function Profile() {
         <section className="mt-2 overflow-hidden rounded-2xl bg-card shadow-card">
           <img
             src={coverAsset.url}
-            alt="Capa do perfil de Klara"
+            alt="Capa do perfil de Carmen"
             width={1200}
             height={600}
             fetchPriority="high"
@@ -121,7 +121,7 @@ function Profile() {
           <div className="relative px-4 pb-4">
             <img
               src={avatarAsset.url}
-              alt="Foto de perfil de Klara"
+              alt="Foto de perfil de Carmen"
               width={512}
               height={512}
               loading="lazy"
@@ -139,10 +139,10 @@ function Profile() {
             </div>
 
             <div className="mt-4 flex items-center gap-1.5">
-              <h1 className="text-xl font-bold text-foreground">Klara</h1>
+              <h1 className="text-xl font-bold text-foreground">Carmen</h1>
               <BadgeCheck className="size-5 fill-verified text-card" />
             </div>
-            <p className="text-sm text-muted-foreground">@klarinha</p>
+            <p className="text-sm text-muted-foreground">@carmenlucia</p>
 
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Tenho 19 anos, e adoro me exibir e explorar minha sensualidade. Aqui você encontra
@@ -175,7 +175,7 @@ function Profile() {
             <div className="mt-3 flex items-center gap-2">
               <img
                 src={avatarAsset.url}
-                alt="Klara"
+                alt="Carmen"
                 width={512}
                 height={512}
                 loading="lazy"
@@ -278,7 +278,7 @@ function Profile() {
             <div className="flex items-center gap-2 p-3">
               <img
                 src={avatarAsset.url}
-                alt="Klara"
+                alt="Carmen"
                 width={512}
                 height={512}
                 loading="lazy"
@@ -287,10 +287,10 @@ function Profile() {
               />
               <div className="flex-1">
                 <div className="flex items-center gap-1 text-sm font-semibold text-foreground">
-                  Klara
+                  Carmen
                   <BadgeCheck className="size-4 fill-verified text-card" />
                 </div>
-                <p className="text-xs text-muted-foreground">@klarinha</p>
+                <p className="text-xs text-muted-foreground">@carmenlucia</p>
               </div>
               <button type="button" aria-label="Mais opções" className="text-foreground">
                 <MoreVertical className="size-5" />
