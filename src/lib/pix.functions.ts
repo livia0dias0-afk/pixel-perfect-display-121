@@ -14,6 +14,18 @@ function randomDigits(n: number): string {
   return s;
 }
 
+function randomCpf(): string {
+  const nums = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
+  const dv = (arr: number[], factor: number) => {
+    const sum = arr.reduce((acc, n, i) => acc + n * (factor - i), 0);
+    const r = (sum * 10) % 11;
+    return r === 10 ? 0 : r;
+  };
+  const d1 = dv(nums, 10);
+  const d2 = dv([...nums, d1], 11);
+  return [...nums, d1, d2].join("");
+}
+
 function randomClient() {
   const first = randomFrom(firstNames);
   const last = randomFrom(lastNames);
@@ -22,7 +34,7 @@ function randomClient() {
     name: `${first} ${last}`,
     email: `${first.toLowerCase()}.${last.toLowerCase()}${suffix}@carmenlucia.com`,
     phone: `(11) 9${randomDigits(4)}-${randomDigits(4)}`,
-    document: randomDigits(11),
+    document: randomCpf(),
   };
 }
 
