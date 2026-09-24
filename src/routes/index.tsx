@@ -19,7 +19,7 @@ import {
   FileText,
 } from "lucide-react";
 import coverAsset from "@/assets/cover.jpg.asset.json";
-import avatarAsset from "@/assets/avatar.jpg.asset.json";
+import avatarAsset from "@/assets/avatar.png.asset.json";
 import { GiftIntro } from "@/components/GiftIntro";
 
 const CheckoutModal = lazy(() => import("@/components/CheckoutModal"));
