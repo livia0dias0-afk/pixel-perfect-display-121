@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { X, Check } from "lucide-react";
 import { createPixCharge } from "@/lib/pix.functions";
 import coverAsset from "@/assets/cover.jpg.asset.json";
-import avatarAsset from "@/assets/avatar.jpg.asset.json";
+import avatarAsset from "@/assets/avatar.png.asset.json";
 
 const benefits = ["Acesso ao conteúdo", "Chat exclusivo com o criador", "Cancele a qualquer hora"];
 
