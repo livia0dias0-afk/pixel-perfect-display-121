@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import coverAsset from "@/assets/cover.jpg.asset.json";
 import avatarAsset from "@/assets/avatar.png.asset.json";
-import { GiftIntro } from "@/components/GiftIntro";
 
 const CheckoutModal = lazy(() => import("@/components/CheckoutModal"));
 
@@ -84,11 +83,6 @@ function Profile() {
   const [openPlans, setOpenPlans] = useState(true);
   const [tab, setTab] = useState<"posts" | "media">("posts");
   const [checkoutPrice, setCheckoutPrice] = useState<string | null>(null);
-  const [giftOpened, setGiftOpened] = useState(false);
-
-  if (!giftOpened) {
-    return <GiftIntro onOpen={() => setGiftOpened(true)} />;
-  }
 
   return (
     <div className="min-h-screen bg-background">
