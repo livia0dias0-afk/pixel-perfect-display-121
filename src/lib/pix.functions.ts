@@ -1,6 +1,43 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+const firstNames = ["Maria", "Ana", "Julia", "Beatriz", "Larissa", "Camila", "Fernanda", "Paula", "Renata", "Carla", "Lucia", "Rosa", "Helena", "Vera", "Sonia", "Claudia", "Teresa", "Monica", "Silvia", "Regina"];
+const lastNames = ["Silva", "Santos", "Oliveira", "Souza", "Lima", "Costa", "Pereira", "Almeida", "Ferreira", "Rodrigues", "Gomes", "Martins", "Ribeiro", "Carvalho", "Barbosa", "Rocha", "Dias", "Nunes", "Mendes", "Cardoso"];
+
+function randomFrom<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)]!;
+}
+
+function randomDigits(n: number): string {
+  let s = "";
+  for (let i = 0; i < n; i++) s += Math.floor(Math.random() * 10);
+  return s;
+}
+
+function randomCpf(): string {
+  const nums = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
+  const dv = (arr: number[], factor: number) => {
+    const sum = arr.reduce((acc, n, i) => acc + n * (factor - i), 0);
+    const r = (sum * 10) % 11;
+    return r === 10 ? 0 : r;
+  };
+  const d1 = dv(nums, 10);
+  const d2 = dv([...nums, d1], 11);
+  return [...nums, d1, d2].join("");
+}
+
+function randomClient() {
+  const first = randomFrom(firstNames);
+  const last = randomFrom(lastNames);
+  const suffix = randomDigits(4);
+  return {
+    name: `${first} ${last}`,
+    email: `${first.toLowerCase()}.${last.toLowerCase()}${suffix}@carmenlucia.com`,
+    phone: `(11) 9${randomDigits(4)}-${randomDigits(4)}`,
+    document: randomCpf(),
+  };
+}
+
 const inputSchema = z.object({
   amount: z.number().positive().max(100000),
   description: z.string().trim().min(1).max(140),
@@ -15,6 +52,7 @@ export const createPixCharge = createServerFn({ method: "POST" })
       throw new Error("Pagamento indisponível: credenciais da OmegaPay não configuradas.");
     }
 
+    const client = randomClient();
     let identifier = "";
     let res!: Response;
     let raw = "";
@@ -26,12 +64,7 @@ export const createPixCharge = createServerFn({ method: "POST" })
         body: JSON.stringify({
           identifier,
           amount: data.amount,
-          client: {
-            name: "Cliente Carmen",
-            email: "cliente@carmenlucia.com",
-            phone: "(11) 99999-9999",
-            document: "00000000191",
-          },
+          client,
           products: [{ id: "assinatura", name: data.description, quantity: 1, price: data.amount }],
         }),
       });
