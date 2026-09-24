@@ -40,7 +40,7 @@ export const createPixCharge = createServerFn({ method: "POST" })
       headers: { ci, cs, "Content-Type": "application/json" },
       body: JSON.stringify({
         amount: data.amount,
-        payerName: "Cliente Klara",
+        payerName: "Cliente Carmen",
         payerDocument: "00000000191",
         transactionId,
         description: data.description,

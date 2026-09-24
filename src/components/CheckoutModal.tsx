@@ -31,7 +31,7 @@ export default function CheckoutModal({
     generatePix({
       data: {
         amount: priceToNumber(price),
-        description: `Assinatura Klara - ${price}`,
+        description: `Assinatura Carmen - ${price}`,
       },
     })
       .then((result) => {
@@ -58,7 +58,7 @@ export default function CheckoutModal({
         <div className="relative">
           <img
             src={coverAsset.url}
-            alt="Capa do perfil de Klara"
+            alt="Capa do perfil de Carmen"
             width={1200}
             height={600}
             decoding="async"
@@ -77,7 +77,7 @@ export default function CheckoutModal({
         <div className="relative px-4 pb-4">
           <img
             src={avatarAsset.url}
-            alt="Klara"
+            alt="Carmen"
             width={512}
             height={512}
             loading="lazy"
@@ -85,8 +85,8 @@ export default function CheckoutModal({
             className="absolute -top-8 left-4 size-16 rounded-full border-4 border-card object-cover"
           />
           <div className="pl-20 pt-2">
-            <p className="text-sm font-semibold text-foreground">Klara</p>
-            <p className="text-xs text-muted-foreground">@klarinha</p>
+            <p className="text-sm font-semibold text-foreground">Carmen</p>
+            <p className="text-xs text-muted-foreground">@carmenlucia</p>
           </div>
 
           <h2 className="mt-4 text-base font-bold text-foreground">Benefícios exclusivos</h2>
