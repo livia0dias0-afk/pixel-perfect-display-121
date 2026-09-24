@@ -5,7 +5,7 @@ const firstNames = ["Maria", "Ana", "Julia", "Beatriz", "Larissa", "Camila", "Fe
 const lastNames = ["Silva", "Santos", "Oliveira", "Souza", "Lima", "Costa", "Pereira", "Almeida", "Ferreira", "Rodrigues", "Gomes", "Martins", "Ribeiro", "Carvalho", "Barbosa", "Rocha", "Dias", "Nunes", "Mendes", "Cardoso"];
 
 function randomFrom<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
+  return arr[Math.floor(Math.random() * arr.length)]!;
 }
 
 function randomDigits(n: number): string {
