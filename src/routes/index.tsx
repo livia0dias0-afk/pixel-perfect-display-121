@@ -18,7 +18,7 @@ import {
   Bookmark,
   FileText,
 } from "lucide-react";
-import coverAsset from "@/assets/cover.jpg.asset.json";
+import coverAsset from "@/assets/cover.png.asset.json";
 import avatarAsset from "@/assets/avatar.png.asset.json";
 
 const CheckoutModal = lazy(() => import("@/components/CheckoutModal"));
