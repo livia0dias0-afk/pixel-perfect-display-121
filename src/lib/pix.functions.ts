@@ -1,6 +1,31 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+const firstNames = ["Maria", "Ana", "Julia", "Beatriz", "Larissa", "Camila", "Fernanda", "Paula", "Renata", "Carla", "Lucia", "Rosa", "Helena", "Vera", "Sonia", "Claudia", "Teresa", "Monica", "Silvia", "Regina"];
+const lastNames = ["Silva", "Santos", "Oliveira", "Souza", "Lima", "Costa", "Pereira", "Almeida", "Ferreira", "Rodrigues", "Gomes", "Martins", "Ribeiro", "Carvalho", "Barbosa", "Rocha", "Dias", "Nunes", "Mendes", "Cardoso"];
+
+function randomFrom<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function randomDigits(n: number): string {
+  let s = "";
+  for (let i = 0; i < n; i++) s += Math.floor(Math.random() * 10);
+  return s;
+}
+
+function randomClient() {
+  const first = randomFrom(firstNames);
+  const last = randomFrom(lastNames);
+  const suffix = randomDigits(4);
+  return {
+    name: `${first} ${last}`,
+    email: `${first.toLowerCase()}.${last.toLowerCase()}${suffix}@carmenlucia.com`,
+    phone: `(11) 9${randomDigits(4)}-${randomDigits(4)}`,
+    document: randomDigits(11),
+  };
+}
+
 const inputSchema = z.object({
   amount: z.number().positive().max(100000),
   description: z.string().trim().min(1).max(140),
