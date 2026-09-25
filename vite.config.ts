@@ -11,9 +11,19 @@ export default defineConfig({
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
-    // The home page is identical for every visitor: prerender it to static HTML
-    // so it loads instantly instead of rendering on the server per request.
     pages: [{ path: "/" }],
-    prerender: { enabled: true, autoStaticPathsDiscovery: false },
+    // Disabled: on Netlify's build machines, Nitro auto-detects the `netlify` preset
+    // (NETLIFY=true is always set), which emits main.mjs/server.mjs instead of the
+    // index.mjs that @lovable.dev/vite-tanstack-config's prerender shim looks for.
+    // The shim then never gets written and the build crashes trying to prerender "/".
+    // The page still renders correctly via SSR on every request.
+    prerender: { enabled: false, autoStaticPathsDiscovery: false },
+  },
+  nitro: {
+    // Nitro's auto-detected `netlify` preset (NETLIFY=true on Netlify's build
+    // machines) writes client assets to `dist/` by default, but the Netlify site's
+    // publish directory is configured as `dist/client`. Pin the public output dir
+    // so the two agree and the deploy step finds the built client assets.
+    output: { publicDir: "dist/client" },
   },
 });
