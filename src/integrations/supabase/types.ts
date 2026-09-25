@@ -14,7 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      pix_transactions: {
+        Row: {
+          created_at: string
+          id: string
+          last_checked_at: string | null
+          paid_at: string | null
+          status: string
+          webhook_token: string | null
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          last_checked_at?: string | null
+          paid_at?: string | null
+          status?: string
+          webhook_token?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_checked_at?: string | null
+          paid_at?: string | null
+          status?: string
+          webhook_token?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
