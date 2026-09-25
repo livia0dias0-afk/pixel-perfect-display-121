@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AreaMembrosRouteImport } from './routes/area-membros'
+import { Route as ApiPublicOmegapayWebhookRouteImport } from './routes/api/public/omegapay-webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,41 @@ const AreaMembrosRoute = AreaMembrosRouteImport.update({
   path: '/area-membros',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicOmegapayWebhookRoute =
+  ApiPublicOmegapayWebhookRouteImport.update({
+    id: '/api/public/omegapay-webhook',
+    path: '/api/public/omegapay-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/area-membros': typeof AreaMembrosRoute
+  '/api/public/omegapay-webhook': typeof ApiPublicOmegapayWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/area-membros': typeof AreaMembrosRoute
+  '/api/public/omegapay-webhook': typeof ApiPublicOmegapayWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/area-membros': typeof AreaMembrosRoute
+  '/api/public/omegapay-webhook': typeof ApiPublicOmegapayWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/area-membros'
+  fullPaths: '/' | '/area-membros' | '/api/public/omegapay-webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/area-membros'
-  id: '__root__' | '/' | '/area-membros'
+  to: '/' | '/area-membros' | '/api/public/omegapay-webhook'
+  id: '__root__' | '/' | '/area-membros' | '/api/public/omegapay-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AreaMembrosRoute: typeof AreaMembrosRoute
+  ApiPublicOmegapayWebhookRoute: typeof ApiPublicOmegapayWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +76,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AreaMembrosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/omegapay-webhook': {
+      id: '/api/public/omegapay-webhook'
+      path: '/api/public/omegapay-webhook'
+      fullPath: '/api/public/omegapay-webhook'
+      preLoaderRoute: typeof ApiPublicOmegapayWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AreaMembrosRoute: AreaMembrosRoute,
+  ApiPublicOmegapayWebhookRoute: ApiPublicOmegapayWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
