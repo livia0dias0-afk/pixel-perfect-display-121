@@ -148,16 +148,6 @@ export default function CheckoutModal({
             </div>
           )}
 
-          {!paid && (
-            <button
-              type="button"
-              onClick={() => confirmPaid(transactionId ?? "teste")}
-              className="mt-3 w-full rounded-full border border-dashed border-brand-green py-2 text-xs font-semibold text-brand-green"
-            >
-              Simular Pagamento Aprovado
-            </button>
-          )}
-
           {pixCode ? (
             <>
               <div className="mt-3 max-h-24 overflow-y-auto break-all rounded-lg border border-border px-3 py-2.5 text-xs text-muted-foreground">
