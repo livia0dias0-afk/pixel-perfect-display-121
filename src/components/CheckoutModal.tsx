@@ -6,7 +6,6 @@ import { createPixCharge, getPixStatus } from "@/lib/pix.functions";
 import coverAsset from "@/assets/cover.png.asset.json";
 import avatarAsset from "@/assets/avatar.png.asset.json";
 
-const ACCESS_KEY = "carmen_access";
 
 const benefits = ["Acesso ao conteúdo", "Chat exclusivo com o criador", "Cancele a qualquer hora"];
 
@@ -31,8 +30,7 @@ export default function CheckoutModal({
   const checkStatus = useServerFn(getPixStatus);
   const navigate = useNavigate();
 
-  const confirmPaid = (id: string) => {
-    localStorage.setItem(ACCESS_KEY, JSON.stringify({ transactionId: id, paidAt: Date.now() }));
+  const confirmPaid = (_id: string) => {
     setPaid(true);
     setTimeout(() => navigate({ to: "/area-membros" }), 1000);
   };
@@ -54,7 +52,7 @@ export default function CheckoutModal({
       } finally {
         busy = false;
       }
-    }, 3000);
+    }, 4000);
     return () => clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transactionId, paid]);
