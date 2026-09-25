@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { X, Check } from "lucide-react";
-import { createPixCharge } from "@/lib/pix.functions";
+import { useNavigate } from "@tanstack/react-router";
+import { X, Check, CheckCircle2 } from "lucide-react";
+import { createPixCharge, getPixStatus } from "@/lib/pix.functions";
 import coverAsset from "@/assets/cover.png.asset.json";
 import avatarAsset from "@/assets/avatar.png.asset.json";
+
+const ACCESS_KEY = "carmen_access";
 
 const benefits = ["Acesso ao conteúdo", "Chat exclusivo com o criador", "Cancele a qualquer hora"];
 
@@ -20,9 +23,41 @@ export default function CheckoutModal({
 }) {
   const [copied, setCopied] = useState(false);
   const [pixCode, setPixCode] = useState<string | null>(null);
+  const [transactionId, setTransactionId] = useState<string | null>(null);
+  const [paid, setPaid] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const generatePix = useServerFn(createPixCharge);
+  const checkStatus = useServerFn(getPixStatus);
+  const navigate = useNavigate();
+
+  const confirmPaid = (id: string) => {
+    localStorage.setItem(ACCESS_KEY, JSON.stringify({ transactionId: id, paidAt: Date.now() }));
+    setPaid(true);
+    setTimeout(() => navigate({ to: "/area-membros" }), 1000);
+  };
+
+  useEffect(() => {
+    if (!transactionId || paid) return;
+    let busy = false;
+    const timer = setInterval(async () => {
+      if (busy) return;
+      busy = true;
+      try {
+        const r = await checkStatus({ data: { transactionId } });
+        if (r.paid) {
+          clearInterval(timer);
+          confirmPaid(transactionId);
+        }
+      } catch {
+        /* tenta de novo no próximo ciclo */
+      } finally {
+        busy = false;
+      }
+    }, 3000);
+    return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactionId, paid]);
 
   useEffect(() => {
     let active = true;
@@ -37,6 +72,7 @@ export default function CheckoutModal({
       .then((result) => {
         if (!active) return;
         setPixCode(result.pixCode);
+        setTransactionId(String(result.transactionId));
         setCopied(false);
       })
       .catch((e: unknown) => {
@@ -104,6 +140,23 @@ export default function CheckoutModal({
           <h3 className="text-base font-bold text-foreground">Formas de pagamento</h3>
           <p className="mt-2 text-xs text-muted-foreground">Valor</p>
           <p className="text-lg font-bold text-foreground">{price}</p>
+
+          {paid && (
+            <div className="mt-3 flex items-center gap-2 rounded-lg bg-brand-green/15 px-3 py-2.5 text-sm font-semibold text-brand-green">
+              <CheckCircle2 className="size-5" />
+              Pagamento confirmado!
+            </div>
+          )}
+
+          {import.meta.env.DEV && !paid && (
+            <button
+              type="button"
+              onClick={() => confirmPaid(transactionId ?? "teste")}
+              className="mt-3 w-full rounded-full border border-dashed border-brand-green py-2 text-xs font-semibold text-brand-green"
+            >
+              Simular Pagamento Aprovado
+            </button>
+          )}
 
           {pixCode ? (
             <>
