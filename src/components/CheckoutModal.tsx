@@ -52,7 +52,7 @@ export default function CheckoutModal({
       } finally {
         busy = false;
       }
-    }, 10000);
+    }, 4000);
     return () => clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transactionId, paid]);

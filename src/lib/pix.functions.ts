@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+const WEBHOOK_URL = "https://project--7c21e168-0b36-48d3-bb06-0eb1abebd42e.lovable.app/api/public/omegapay-webhook";
+
 const firstNames = ["Maria", "Ana", "Julia", "Beatriz", "Larissa", "Camila", "Fernanda", "Paula", "Renata", "Carla", "Lucia", "Rosa", "Helena", "Vera", "Sonia", "Claudia", "Teresa", "Monica", "Silvia", "Regina"];
 const lastNames = ["Silva", "Santos", "Oliveira", "Souza", "Lima", "Costa", "Pereira", "Almeida", "Ferreira", "Rodrigues", "Gomes", "Martins", "Ribeiro", "Carvalho", "Barbosa", "Rocha", "Dias", "Nunes", "Mendes", "Cardoso"];
 
@@ -66,6 +68,7 @@ export const createPixCharge = createServerFn({ method: "POST" })
           amount: data.amount,
           client,
           products: [{ id: "assinatura", name: data.description, quantity: 1, price: data.amount }],
+          callbackUrl: WEBHOOK_URL,
         }),
       });
       raw = await res.text();
@@ -92,35 +95,42 @@ export const createPixCharge = createServerFn({ method: "POST" })
       throw new Error("Pix gerado, mas o código não foi retornado. Tente novamente.");
     }
 
-    return { transactionId: parsed?.transactionId ?? identifier, pixCode };
+    const transactionId = String(parsed?.transactionId ?? identifier);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("pix_transactions").insert({
+      id: transactionId,
+      webhook_token: parsed?.webhookToken ?? null,
+      status: String(parsed?.status ?? "PENDING").toUpperCase(),
+    });
+    return { transactionId, pixCode };
   });
-
-const PAID = ["PAID", "APPROVED", "COMPLETED", "CONFIRMED"];
 
 export const getPixStatus = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => z.object({ transactionId: z.string().min(1).max(200) }).parse(data))
   .handler(async ({ data }) => {
-    const pk = process.env["OMEGAPAY_PUBLIC_KEY"];
-    const sk = process.env["OMEGAPAY_SECRET_KEY"];
-    if (!pk || !sk) return { status: "UNKNOWN", paid: false };
-    const res = await fetch(
-      `https://app.omegapayments.com.br/api/v1/gateway/transactions?id=${encodeURIComponent(data.transactionId)}`,
-      { headers: { "x-public-key": pk, "x-secret-key": sk } },
-    );
-    if (!res.ok) return { status: res.status === 429 ? "RATE_LIMITED" : "PENDING", paid: false };
-    const j: any = await res.json().catch(() => null);
-    const status = String(j?.status ?? j?.transaction?.status ?? j?.data?.status ?? "PENDING").toUpperCase();
-    const paid = PAID.includes(status);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { checkAndStore } = await import("./omegapay.server");
+    const { data: row } = await supabaseAdmin
+      .from("pix_transactions")
+      .select("status, paid_at, last_checked_at")
+      .eq("id", data.transactionId)
+      .maybeSingle();
+    if (!row) return { status: "UNKNOWN", paid: false };
+
+    let paid = !!row.paid_at;
+    let status = row.status;
+    // Reserva: se o aviso (webhook) da OmegaPay não chegou, consulta a OmegaPay no máximo a cada 20s
+    // (ela bloqueia consultas muito frequentes).
+    const last = row.last_checked_at ? new Date(row.last_checked_at).getTime() : 0;
+    if (!paid && Date.now() - last > 20_000) {
+      const r = await checkAndStore(data.transactionId);
+      paid = r.paid;
+      status = r.status;
+    }
     if (paid) {
-      // Pagamento confirmado pela OmegaPay: grava acesso num cookie criptografado (não editável pelo cliente).
-      try {
-        const { accessSession } = await import("./access.server");
-        const session = await accessSession();
-        await session.update({ paid: true, transactionId: data.transactionId, paidAt: Date.now() });
-      } catch (e) {
-        console.error("Falha ao gravar acesso", e);
-        throw e;
-      }
+      const { accessSession } = await import("./access.server");
+      const session = await accessSession();
+      await session.update({ paid: true, transactionId: data.transactionId, paidAt: Date.now() });
     }
     return { status, paid };
   });
