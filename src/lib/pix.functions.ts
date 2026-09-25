@@ -110,5 +110,19 @@ export const getPixStatus = createServerFn({ method: "POST" })
     if (!res.ok) return { status: "PENDING", paid: false };
     const j: any = await res.json().catch(() => null);
     const status = String(j?.status ?? j?.transaction?.status ?? j?.data?.status ?? "PENDING").toUpperCase();
-    return { status, paid: PAID.includes(status) };
+    const paid = PAID.includes(status);
+    if (paid) {
+      // Pagamento confirmado pela OmegaPay: grava acesso num cookie criptografado (não editável pelo cliente).
+      const { accessSession } = await import("./access.server");
+      const session = await accessSession();
+      await session.update({ paid: true, transactionId: data.transactionId, paidAt: Date.now() });
+    }
+    return { status, paid };
   });
+
+export const getMembersContent = createServerFn({ method: "GET" }).handler(async () => {
+  const { accessSession, MIDIAS } = await import("./access.server");
+  const session = await accessSession();
+  if (!session.data.paid) return { allowed: false as const, midias: [] };
+  return { allowed: true as const, midias: MIDIAS };
+});

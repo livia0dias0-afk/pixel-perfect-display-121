@@ -1,14 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Play, Image as ImageIcon } from "lucide-react";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useState } from "react";
+import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import posterSi8bx5 from "@/assets/gallery-si8bx5.jpg.asset.json";
-import posterUfwruf from "@/assets/gallery-ufwruf.jpg.asset.json";
-import posterWvrn7z from "@/assets/gallery-wvrn7z.jpg.asset.json";
-import posterZ79w79 from "@/assets/gallery-z79w79.jpg.asset.json";
-
-export const ACCESS_KEY = "carmen_access";
+import { getMembersContent } from "@/lib/pix.functions";
 
 export const Route = createFileRoute("/area-membros")({
   head: () => ({
@@ -22,46 +17,21 @@ export const Route = createFileRoute("/area-membros")({
       { name: "robots", content: "noindex" },
     ],
   }),
+  loader: async () => {
+    const r = await getMembersContent();
+    if (!r.allowed) throw redirect({ to: "/" });
+    return r;
+  },
+  errorComponent: () => (
+    <div className="p-6 text-center text-sm text-muted-foreground">Não foi possível carregar a área de membros. Atualize a página.</div>
+  ),
+  notFoundComponent: () => <div className="p-6 text-center text-sm">Página não encontrada.</div>,
   component: MembersArea,
 });
 
-const midias = [
-  { id: 1, tipo: "video", url: "https://files.catbox.moe/si8bx5.mp4" },
-  { id: 2, tipo: "video", url: "https://files.catbox.moe/ufwruf.mp4" },
-  { id: 3, tipo: "video", url: "https://files.catbox.moe/si8bx5.mp4" },
-  { id: 4, tipo: "video", url: "https://files.catbox.moe/wvrn7z.mp4" },
-  { id: 5, tipo: "foto", url: "https://files.catbox.moe/z79w79.mp4" },
-  { id: 6, tipo: "video", url: "https://files.catbox.moe/w3beyc.mp4" },
-  { id: 7, tipo: "video", url: "https://files.catbox.moe/v2gp5w.mp4" },
-  { id: 8, tipo: "video", url: "https://files.catbox.moe/r7zcc1.mp4" },
-  { id: 9, tipo: "video", url: "https://files.catbox.moe/5gh1yx.mp4" },
-] as const;
-
-type Midia = (typeof midias)[number];
-
-// O quinto link foi identificado como video/mp4, apesar de estar marcado como foto.
-const isVideo = (midia: Midia) => midia.tipo === "video" || /\.mp4(?:$|[?#])/i.test(midia.url);
-const posterById: Partial<Record<Midia["id"], string>> = {
-  1: posterSi8bx5.url,
-  2: posterUfwruf.url,
-  3: posterSi8bx5.url,
-  4: posterWvrn7z.url,
-  5: posterZ79w79.url,
-};
-// Vídeos novos (6-9) não têm miniatura gerada: o próprio vídeo serve de prévia no card.
-const hasPoster = (id: Midia["id"]) => id in posterById;
-
 function MembersArea() {
-  const navigate = useNavigate();
-  const [ok, setOk] = useState(false);
-  const [selecionada, setSelecionada] = useState<Midia | null>(null);
-
-  useEffect(() => {
-    if (localStorage.getItem(ACCESS_KEY)) setOk(true);
-    else navigate({ to: "/" });
-  }, [navigate]);
-
-  if (!ok) return <div className="min-h-screen bg-background" />;
+  const { midias } = Route.useLoaderData();
+  const [selecionada, setSelecionada] = useState<(typeof midias)[number] | null>(null);
 
   return (
     <div className="min-h-screen bg-background">
@@ -78,49 +48,38 @@ function MembersArea() {
               key={midia.id}
               type="button"
               variant="ghost"
-              aria-label={`Abrir ${isVideo(midia) ? "vídeo" : "foto"} ${midia.id}`}
+              aria-label={`Abrir vídeo ${midia.id}`}
               onClick={() => setSelecionada(midia)}
               className="relative aspect-square h-auto w-full overflow-hidden rounded-xl bg-muted p-0 hover:bg-muted/90"
             >
-              {isVideo(midia) ? (
-                <>
-                  {hasPoster(midia.id) ? (
-                    <img src={posterById[midia.id]} alt="" loading="lazy" className="pointer-events-none absolute inset-0 size-full object-cover" />
-                  ) : (
-                    <video
-                      src={midia.url}
-                      preload="metadata"
-                      muted
-                      playsInline
-                      tabIndex={-1}
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-0 size-full object-cover"
-                    />
-                  )}
-                  <span className="relative flex size-9 items-center justify-center rounded-full bg-background/80">
-                    <Play className="size-5 text-foreground" aria-hidden="true" />
-                  </span>
-                </>
+              {midia.poster ? (
+                <img src={midia.poster} alt="" loading="lazy" className="pointer-events-none absolute inset-0 size-full object-cover" />
               ) : (
-                <>
-                  <img src={midia.url} alt="" loading="lazy" className="absolute inset-0 size-full object-cover" />
-                  <ImageIcon className="relative size-6 text-muted-foreground" aria-hidden="true" />
-                </>
+                <video
+                  src={midia.url}
+                  preload="metadata"
+                  muted
+                  playsInline
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 size-full object-cover"
+                />
               )}
+              <span className="relative flex size-9 items-center justify-center rounded-full bg-background/80">
+                <Play className="size-5 text-foreground" aria-hidden="true" />
+              </span>
             </Button>
           ))}
         </div>
       </main>
       <Dialog open={selecionada !== null} onOpenChange={(open) => { if (!open) setSelecionada(null); }}>
         <DialogContent className="w-[calc(100vw-2rem)] max-w-3xl border-0 bg-background p-3 sm:p-4">
-          <DialogTitle className="sr-only">
-            {selecionada ? `${isVideo(selecionada) ? "Vídeo" : "Foto"} ${selecionada.id}` : "Mídia"}
-          </DialogTitle>
-          {selecionada && (isVideo(selecionada) ? (
+          <DialogTitle className="sr-only">{selecionada ? `Vídeo ${selecionada.id}` : "Mídia"}</DialogTitle>
+          {selecionada && (
             <video
               key={selecionada.id}
               src={selecionada.url}
-              poster={hasPoster(selecionada.id) ? posterById[selecionada.id] : undefined}
+              poster={selecionada.poster ?? undefined}
               controls
               controlsList="nodownload"
               disablePictureInPicture
@@ -129,9 +88,7 @@ function MembersArea() {
             >
               Seu navegador não consegue reproduzir este vídeo.
             </video>
-          ) : (
-            <img src={selecionada.url} alt={`Foto ${selecionada.id}`} className="max-h-[80vh] w-full object-contain" />
-          ))}
+          )}
         </DialogContent>
       </Dialog>
     </div>
