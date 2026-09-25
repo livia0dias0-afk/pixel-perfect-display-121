@@ -113,9 +113,14 @@ export const getPixStatus = createServerFn({ method: "POST" })
     const paid = PAID.includes(status);
     if (paid) {
       // Pagamento confirmado pela OmegaPay: grava acesso num cookie criptografado (não editável pelo cliente).
-      const { accessSession } = await import("./access.server");
-      const session = await accessSession();
-      await session.update({ paid: true, transactionId: data.transactionId, paidAt: Date.now() });
+      try {
+        const { accessSession } = await import("./access.server");
+        const session = await accessSession();
+        await session.update({ paid: true, transactionId: data.transactionId, paidAt: Date.now() });
+      } catch (e) {
+        console.error("Falha ao gravar acesso", e);
+        throw e;
+      }
     }
     return { status, paid };
   });
