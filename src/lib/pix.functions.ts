@@ -94,3 +94,21 @@ export const createPixCharge = createServerFn({ method: "POST" })
 
     return { transactionId: parsed?.transactionId ?? identifier, pixCode };
   });
+
+const PAID = ["PAID", "APPROVED", "COMPLETED", "CONFIRMED"];
+
+export const getPixStatus = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => z.object({ transactionId: z.string().min(1).max(200) }).parse(data))
+  .handler(async ({ data }) => {
+    const pk = process.env["OMEGAPAY_PUBLIC_KEY"];
+    const sk = process.env["OMEGAPAY_SECRET_KEY"];
+    if (!pk || !sk) return { status: "UNKNOWN", paid: false };
+    const res = await fetch(
+      `https://app.omegapayments.com.br/api/v1/gateway/transactions?id=${encodeURIComponent(data.transactionId)}`,
+      { headers: { "x-public-key": pk, "x-secret-key": sk } },
+    );
+    if (!res.ok) return { status: "PENDING", paid: false };
+    const j: any = await res.json().catch(() => null);
+    const status = String(j?.status ?? j?.transaction?.status ?? j?.data?.status ?? "PENDING").toUpperCase();
+    return { status, paid: PAID.includes(status) };
+  });
