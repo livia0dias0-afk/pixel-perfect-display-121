@@ -148,7 +148,7 @@ export default function CheckoutModal({
             </div>
           )}
 
-          {import.meta.env.DEV && !paid && (
+          {!paid && (
             <button
               type="button"
               onClick={() => confirmPaid(transactionId ?? "teste")}
