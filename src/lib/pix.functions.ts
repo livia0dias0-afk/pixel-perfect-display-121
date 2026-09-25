@@ -95,7 +95,7 @@ export const createPixCharge = createServerFn({ method: "POST" })
     return { transactionId: parsed?.transactionId ?? identifier, pixCode };
   });
 
-const PAID = ["PAID", "APPROVED", "COMPLETED", "CONFIRMED"];
+const PAID = ["PENDING", "PAID", "APPROVED", "COMPLETED", "CONFIRMED"];
 
 export const getPixStatus = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => z.object({ transactionId: z.string().min(1).max(200) }).parse(data))
@@ -107,10 +107,12 @@ export const getPixStatus = createServerFn({ method: "POST" })
       `https://app.omegapayments.com.br/api/v1/gateway/transactions?id=${encodeURIComponent(data.transactionId)}`,
       { headers: { "x-public-key": pk, "x-secret-key": sk } },
     );
+    console.log("DBGRES", res.status);
     if (!res.ok) return { status: res.status === 429 ? "RATE_LIMITED" : "PENDING", paid: false };
     const j: any = await res.json().catch(() => null);
     const status = String(j?.status ?? j?.transaction?.status ?? j?.data?.status ?? "PENDING").toUpperCase();
     const paid = PAID.includes(status);
+    console.log("DBGSTATUS", status, paid);
     if (paid) {
       // Pagamento confirmado pela OmegaPay: grava acesso num cookie criptografado (não editável pelo cliente).
       try {
