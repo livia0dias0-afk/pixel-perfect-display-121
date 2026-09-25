@@ -31,19 +31,25 @@ const midias = [
   { id: 3, tipo: "video", url: "https://files.catbox.moe/si8bx5.mp4" },
   { id: 4, tipo: "video", url: "https://files.catbox.moe/wvrn7z.mp4" },
   { id: 5, tipo: "foto", url: "https://files.catbox.moe/z79w79.mp4" },
+  { id: 6, tipo: "video", url: "https://files.catbox.moe/w3beyc.mp4" },
+  { id: 7, tipo: "video", url: "https://files.catbox.moe/v2gp5w.mp4" },
+  { id: 8, tipo: "video", url: "https://files.catbox.moe/r7zcc1.mp4" },
+  { id: 9, tipo: "video", url: "https://files.catbox.moe/5gh1yx.mp4" },
 ] as const;
 
 type Midia = (typeof midias)[number];
 
 // O quinto link foi identificado como video/mp4, apesar de estar marcado como foto.
 const isVideo = (midia: Midia) => midia.tipo === "video" || /\.mp4(?:$|[?#])/i.test(midia.url);
-const posterById: Record<Midia["id"], string> = {
+const posterById: Partial<Record<Midia["id"], string>> = {
   1: posterSi8bx5.url,
   2: posterUfwruf.url,
   3: posterSi8bx5.url,
   4: posterWvrn7z.url,
   5: posterZ79w79.url,
 };
+// Vídeos novos (6-9) não têm miniatura gerada: o próprio vídeo serve de prévia no card.
+const hasPoster = (id: Midia["id"]) => id in posterById;
 
 function MembersArea() {
   const navigate = useNavigate();
@@ -78,7 +84,19 @@ function MembersArea() {
             >
               {isVideo(midia) ? (
                 <>
-                  <img src={posterById[midia.id]} alt="" loading="lazy" className="pointer-events-none absolute inset-0 size-full object-cover" />
+                  {hasPoster(midia.id) ? (
+                    <img src={posterById[midia.id]} alt="" loading="lazy" className="pointer-events-none absolute inset-0 size-full object-cover" />
+                  ) : (
+                    <video
+                      src={midia.url}
+                      preload="metadata"
+                      muted
+                      playsInline
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 size-full object-cover"
+                    />
+                  )}
                   <span className="relative flex size-9 items-center justify-center rounded-full bg-background/80">
                     <Play className="size-5 text-foreground" aria-hidden="true" />
                   </span>
@@ -102,7 +120,7 @@ function MembersArea() {
             <video
               key={selecionada.id}
               src={selecionada.url}
-              poster={posterById[selecionada.id]}
+              poster={hasPoster(selecionada.id) ? posterById[selecionada.id] : undefined}
               controls
               controlsList="nodownload"
               disablePictureInPicture
