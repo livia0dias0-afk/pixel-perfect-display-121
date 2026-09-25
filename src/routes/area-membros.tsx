@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import { Play, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import posterSi8bx5 from "@/assets/gallery-si8bx5.jpg.asset.json";
+import posterUfwruf from "@/assets/gallery-ufwruf.jpg.asset.json";
+import posterWvrn7z from "@/assets/gallery-wvrn7z.jpg.asset.json";
+import posterZ79w79 from "@/assets/gallery-z79w79.jpg.asset.json";
 
 export const ACCESS_KEY = "carmen_access";
 
@@ -33,6 +37,13 @@ type Midia = (typeof midias)[number];
 
 // O quinto link foi identificado como video/mp4, apesar de estar marcado como foto.
 const isVideo = (midia: Midia) => midia.tipo === "video" || /\.mp4(?:$|[?#])/i.test(midia.url);
+const posterById: Record<Midia["id"], string> = {
+  1: posterSi8bx5.url,
+  2: posterUfwruf.url,
+  3: posterSi8bx5.url,
+  4: posterWvrn7z.url,
+  5: posterZ79w79.url,
+};
 
 function MembersArea() {
   const navigate = useNavigate();
@@ -67,14 +78,7 @@ function MembersArea() {
             >
               {isVideo(midia) ? (
                 <>
-                  <video
-                    src={midia.url}
-                    preload="metadata"
-                    muted
-                    playsInline
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 size-full object-cover"
-                  />
+                  <img src={posterById[midia.id]} alt="" loading="lazy" className="pointer-events-none absolute inset-0 size-full object-cover" />
                   <span className="relative flex size-9 items-center justify-center rounded-full bg-background/80">
                     <Play className="size-5 text-foreground" aria-hidden="true" />
                   </span>
@@ -98,12 +102,12 @@ function MembersArea() {
             <video
               key={selecionada.id}
               src={selecionada.url}
+              poster={posterById[selecionada.id]}
               controls
               controlsList="nodownload"
               disablePictureInPicture
               playsInline
-              autoPlay
-              className="max-h-[80vh] w-full bg-foreground object-contain"
+              className="aspect-video max-h-[80vh] w-full bg-foreground object-contain"
             >
               Seu navegador não consegue reproduzir este vídeo.
             </video>
